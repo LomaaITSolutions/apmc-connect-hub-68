@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Phone, Mail, Menu, X } from "lucide-react";
+import { Search, Phone, Mail, Menu, X, ChevronDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import logo from "@/assets/apmc-logo.png";
 
 const Header = () => {
@@ -10,7 +16,17 @@ const Header = () => {
   const menuItems = [
     { name: "Home", href: "#" },
     { name: "CME", href: "#", hasDropdown: true },
-    { name: "NR1 Services", href: "#", hasDropdown: true },
+    { 
+      name: "NRI Services", 
+      href: "#", 
+      hasDropdown: true,
+      dropdownItems: [
+        { name: "IN ABSENTIA Registration", href: "#" },
+        { name: "IN ABSENTIA Affidavit Proforma", href: "#" },
+        { name: "NMC Good Standing Certificate", href: "#" },
+        { name: "Temporary Permission for Foreign/Outside State visiting Doctors", href: "#" },
+      ]
+    },
     { name: "Gallery", href: "#" },
     { name: "FAQ", href: "#" },
     { name: "Constitution", href: "/constitution" },
@@ -88,15 +104,33 @@ const Header = () => {
           {/* Navigation Menu - Desktop */}
           <nav className="hidden lg:flex items-center justify-between mt-4">
             <div className="flex items-center gap-6">
-              {menuItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="text-sm font-medium text-foreground hover:text-primary transition-colors py-2"
-                >
-                  {item.name}
-                </a>
-              ))}
+              {menuItems.map((item) => 
+                item.hasDropdown && item.dropdownItems ? (
+                  <DropdownMenu key={item.name}>
+                    <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium text-foreground hover:text-primary transition-colors py-2">
+                      {item.name}
+                      <ChevronDown size={14} />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-80">
+                      {item.dropdownItems.map((dropdownItem) => (
+                        <DropdownMenuItem key={dropdownItem.name} asChild>
+                          <a href={dropdownItem.href} className="cursor-pointer">
+                            {dropdownItem.name}
+                          </a>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    className="text-sm font-medium text-foreground hover:text-primary transition-colors py-2"
+                  >
+                    {item.name}
+                  </a>
+                )
+              )}
             </div>
           </nav>
 
@@ -128,15 +162,34 @@ const Header = () => {
 
               {/* Mobile Navigation */}
               <nav className="space-y-2">
-                {menuItems.map((item) => (
-                  <a
-                    key={item.name}
-                    href={item.href}
-                    className="block py-2 text-sm font-medium text-foreground hover:text-primary"
-                  >
-                    {item.name}
-                  </a>
-                ))}
+                {menuItems.map((item) => 
+                  item.hasDropdown && item.dropdownItems ? (
+                    <div key={item.name} className="space-y-1">
+                      <div className="py-2 text-sm font-medium text-foreground">
+                        {item.name}
+                      </div>
+                      <div className="pl-4 space-y-1">
+                        {item.dropdownItems.map((dropdownItem) => (
+                          <a
+                            key={dropdownItem.name}
+                            href={dropdownItem.href}
+                            className="block py-1 text-sm text-muted-foreground hover:text-primary"
+                          >
+                            {dropdownItem.name}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <a
+                      key={item.name}
+                      href={item.href}
+                      className="block py-2 text-sm font-medium text-foreground hover:text-primary"
+                    >
+                      {item.name}
+                    </a>
+                  )
+                )}
               </nav>
 
               {/* Mobile Quick Actions */}
