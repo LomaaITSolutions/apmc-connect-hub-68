@@ -21,10 +21,10 @@ const Header = () => {
       href: "#", 
       hasDropdown: true,
       dropdownItems: [
-        { name: "IN ABSENTIA Registration", href: "#" },
-        { name: "IN ABSENTIA Affidavit Proforma", href: "#" },
-        { name: "NMC Good Standing Certificate", href: "#" },
-        { name: "Temporary Permission for Foreign/Outside State visiting Doctors", href: "#" },
+        { name: "IN ABSENTIA Registration", href: "/in-absentia-registration" },
+        { name: "IN ABSENTIA Affidavit Proforma", href: "/in-absentia-affidavit" },
+        { name: "NMC Good Standing Certificate", href: "/good-standing-certificate" },
+        { name: "Temporary Permission for Foreign/Outside State visiting Doctors", href: "/temporary-permission" },
       ]
     },
     { name: "Gallery", href: "#" },
