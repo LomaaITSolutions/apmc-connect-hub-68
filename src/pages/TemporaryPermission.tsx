@@ -3,9 +3,39 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { FileText, Download, Clock, Users, AlertTriangle } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+import { FileText, Download, Clock, Users, AlertTriangle, Send } from "lucide-react";
 
 const TemporaryPermission = () => {
+  const { toast } = useToast();
+
+  const handleDownloadForm = () => {
+    toast({
+      title: "Download Started",
+      description: "Temporary Permission application form download will begin shortly.",
+    });
+    setTimeout(() => {
+      const link = document.createElement('a');
+      link.href = 'data:text/plain;charset=utf-8,Temporary Permission Application Form - Download will be available from APMC office';
+      link.download = 'temporary-permission-form.txt';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }, 1000);
+  };
+
+  const handleSubmitApplication = (formData: FormData) => {
+    toast({
+      title: "Application Submitted",
+      description: "Your Temporary Permission application has been submitted successfully. You will be contacted within 48 hours.",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -225,11 +255,92 @@ const TemporaryPermission = () => {
 
           {/* Action Buttons */}
           <div className="flex flex-col md:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
-              <FileText className="mr-2" size={16} />
-              Apply for Permission
-            </Button>
-            <Button variant="outline" size="lg">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
+                  <FileText className="mr-2" size={16} />
+                  Apply for Permission
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Temporary Permission Application</DialogTitle>
+                  <DialogDescription>
+                    Complete the form below to apply for temporary medical practice permission.
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.currentTarget);
+                  handleSubmitApplication(formData);
+                }} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="firstName">First Name *</Label>
+                      <Input id="firstName" name="firstName" required />
+                    </div>
+                    <div>
+                      <Label htmlFor="lastName">Last Name *</Label>
+                      <Input id="lastName" name="lastName" required />
+                    </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="nationality">Nationality *</Label>
+                    <Select name="nationality" required>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select nationality" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="indian">Indian</SelectItem>
+                        <SelectItem value="foreign">Foreign National</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="email">Email Address *</Label>
+                    <Input id="email" name="email" type="email" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="phone">Phone Number *</Label>
+                    <Input id="phone" name="phone" type="tel" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="qualification">Medical Qualification *</Label>
+                    <Input id="qualification" name="qualification" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="university">University/Institution *</Label>
+                    <Input id="university" name="university" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="duration">Permission Duration *</Label>
+                    <Select name="duration" required>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select duration" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="30days">Up to 30 days</SelectItem>
+                        <SelectItem value="3months">Up to 3 months</SelectItem>
+                        <SelectItem value="6months">Up to 6 months</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="practiceLocation">Proposed Practice Location *</Label>
+                    <Textarea id="practiceLocation" name="practiceLocation" placeholder="Hospital/Clinic name and address where you plan to practice" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="purpose">Purpose of Visit *</Label>
+                    <Textarea id="purpose" name="purpose" placeholder="Explain the purpose of your temporary practice in Andhra Pradesh" required />
+                  </div>
+                  <Button type="submit" className="w-full">
+                    <Send className="mr-2" size={16} />
+                    Submit Application
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
+            <Button variant="outline" size="lg" onClick={handleDownloadForm}>
               <Download className="mr-2" size={16} />
               Download Application Form
             </Button>

@@ -2,9 +2,39 @@ import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Download, Shield, Clock } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+import { FileText, Download, Shield, Clock, Send } from "lucide-react";
 
 const GoodStandingCertificate = () => {
+  const { toast } = useToast();
+
+  const handleDownloadForm = () => {
+    toast({
+      title: "Download Started",
+      description: "Good Standing Certificate application form download will begin shortly.",
+    });
+    setTimeout(() => {
+      const link = document.createElement('a');
+      link.href = 'data:text/plain;charset=utf-8,Good Standing Certificate Application Form - Download will be available from APMC office';
+      link.download = 'good-standing-certificate-form.txt';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }, 1000);
+  };
+
+  const handleSubmitApplication = (formData: FormData) => {
+    toast({
+      title: "Application Submitted",
+      description: "Your Good Standing Certificate application has been submitted successfully. Processing will begin within 24 hours.",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -164,11 +194,76 @@ const GoodStandingCertificate = () => {
 
           {/* Action Buttons */}
           <div className="flex flex-col md:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
-              <FileText className="mr-2" size={16} />
-              Apply Online
-            </Button>
-            <Button variant="outline" size="lg">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
+                  <FileText className="mr-2" size={16} />
+                  Apply Online
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Good Standing Certificate Application</DialogTitle>
+                  <DialogDescription>
+                    Complete the form below to apply for your Good Standing Certificate.
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.currentTarget);
+                  handleSubmitApplication(formData);
+                }} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="firstName">First Name *</Label>
+                      <Input id="firstName" name="firstName" required />
+                    </div>
+                    <div>
+                      <Label htmlFor="lastName">Last Name *</Label>
+                      <Input id="lastName" name="lastName" required />
+                    </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="registrationNumber">APMC Registration Number *</Label>
+                    <Input id="registrationNumber" name="registrationNumber" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="email">Email Address *</Label>
+                    <Input id="email" name="email" type="email" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="phone">Phone Number *</Label>
+                    <Input id="phone" name="phone" type="tel" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="processingType">Processing Type *</Label>
+                    <Select name="processingType" required>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select processing type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="standard">Standard (7-10 days) - ₹2,500</SelectItem>
+                        <SelectItem value="express">Express (3-5 days) - ₹5,000</SelectItem>
+                        <SelectItem value="urgent">Urgent (1-2 days) - ₹10,000</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="currentPractice">Current Practice Details *</Label>
+                    <Textarea id="currentPractice" name="currentPractice" placeholder="Hospital/Clinic name and address where you currently practice" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="purpose">Purpose of Certificate *</Label>
+                    <Textarea id="purpose" name="purpose" placeholder="Explain why you need the Good Standing Certificate" required />
+                  </div>
+                  <Button type="submit" className="w-full">
+                    <Send className="mr-2" size={16} />
+                    Submit Application
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
+            <Button variant="outline" size="lg" onClick={handleDownloadForm}>
               <Download className="mr-2" size={16} />
               Download Application Form
             </Button>

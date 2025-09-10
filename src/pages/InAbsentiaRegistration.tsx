@@ -1,9 +1,40 @@
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, Download, CheckCircle } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+import { FileText, Download, CheckCircle, Send } from "lucide-react";
 
 const InAbsentiaRegistration = () => {
+  const { toast } = useToast();
+
+  const handleDownloadForm = () => {
+    toast({
+      title: "Download Started",
+      description: "IN ABSENTIA Registration Form download will begin shortly.",
+    });
+    // Simulate download
+    setTimeout(() => {
+      const link = document.createElement('a');
+      link.href = 'data:text/plain;charset=utf-8,IN ABSENTIA Registration Form - Download will be available from APMC office';
+      link.download = 'in-absentia-registration-form.txt';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }, 1000);
+  };
+
+  const handleSubmitApplication = (formData: FormData) => {
+    toast({
+      title: "Application Submitted",
+      description: "Your IN ABSENTIA registration application has been submitted successfully. You will receive a confirmation email shortly.",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -91,11 +122,79 @@ const InAbsentiaRegistration = () => {
 
           {/* Action Buttons */}
           <div className="flex flex-col md:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
-              <FileText className="mr-2" size={16} />
-              Start Application
-            </Button>
-            <Button variant="outline" size="lg">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
+                  <FileText className="mr-2" size={16} />
+                  Start Application
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>IN ABSENTIA Registration Application</DialogTitle>
+                  <DialogDescription>
+                    Complete the form below to submit your IN ABSENTIA registration application.
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.currentTarget);
+                  handleSubmitApplication(formData);
+                }} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="firstName">First Name *</Label>
+                      <Input id="firstName" name="firstName" required />
+                    </div>
+                    <div>
+                      <Label htmlFor="lastName">Last Name *</Label>
+                      <Input id="lastName" name="lastName" required />
+                    </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="email">Email Address *</Label>
+                    <Input id="email" name="email" type="email" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="phone">Phone Number *</Label>
+                    <Input id="phone" name="phone" type="tel" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="qualification">Medical Qualification *</Label>
+                    <Select name="qualification" required>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your qualification" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="mbbs">MBBS</SelectItem>
+                        <SelectItem value="md">MD</SelectItem>
+                        <SelectItem value="ms">MS</SelectItem>
+                        <SelectItem value="dm">DM</SelectItem>
+                        <SelectItem value="mch">MCh</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="university">University/Institution *</Label>
+                    <Input id="university" name="university" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="currentAddress">Current Address *</Label>
+                    <Textarea id="currentAddress" name="currentAddress" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="purpose">Purpose of Registration *</Label>
+                    <Textarea id="purpose" name="purpose" placeholder="Please explain why you need IN ABSENTIA registration" required />
+                  </div>
+                  <Button type="submit" className="w-full">
+                    <Send className="mr-2" size={16} />
+                    Submit Application
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
+            <Button variant="outline" size="lg" onClick={handleDownloadForm}>
               <Download className="mr-2" size={16} />
               Download Form
             </Button>
